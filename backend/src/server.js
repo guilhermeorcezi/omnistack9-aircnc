@@ -4,7 +4,7 @@ const cors = require('cors');
 const path = require('path');
 
 const socketio = require('socket.io');
-const http = require ('http');
+const http = require('http');
 
 const routes = require('./routes');
 
@@ -14,28 +14,27 @@ const io = socketio(server);
 
 const connectedUsers = {};
 
-mongoose.connect('mongodb+srv://guilhermeorcezi:guilhermeorcezi@guilherme-port-gioju.mongodb.net/guidb?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-    useUnifiedTopology:true,
-})
+mongoose.connect(process.env.MONGO_URL, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useFindAndModify: true
+});
 
-io.on('connection', socket => {
-    const { user_id } = socket.handshake.query;
+io.on('connection', (socket) => {
+	const { user_id } = socket.handshake.query;
 
-    connectedUsers[user_id] = socket.id;
+	connectedUsers[user_id] = socket.id;
 });
 
 app.use((req, resp, next) => {
-    req.io = io;
-    req.connectedUsers = connectedUsers;
+	req.io = io;
+	req.connectedUsers = connectedUsers;
 
-    return next();
-})
-
-
+	return next();
+});
 
 app.use(cors());
 app.use(express.json());
-app.use('/files', express.static(path.resolve(__dirname,'..','uploads')));
+app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')));
 app.use(routes);
 server.listen(3333);
