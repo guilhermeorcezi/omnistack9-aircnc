@@ -16,7 +16,7 @@ const SpotSchema = new moongose.Schema({
 });
 
 SpotSchema.virtual('thumbnail_url').get(function(){
-    return `http://localhost:3333/files/${this.thumbnail}`
+    return `http://192.168.0.11/files/${this.thumbnail}`
 })
 
 module.exports = moongose.model('Spot',SpotSchema);
